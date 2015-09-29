@@ -4,7 +4,7 @@ import com.zhenhui.demo.Study.netty.core.handler.AbstractHandler;
 import com.zhenhui.demo.Study.netty.core.message.Message;
 import com.zhenhui.demo.Study.netty.core.session.Session;
 
-
+@SuppressWarnings("unused")
 public class MessageHandler extends AbstractHandler {
 
     @Override

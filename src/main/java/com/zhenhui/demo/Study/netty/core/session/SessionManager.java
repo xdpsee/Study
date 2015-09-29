@@ -2,11 +2,13 @@ package com.zhenhui.demo.Study.netty.core.session;
 
 public interface SessionManager {
 
-    public Session getSession(final String key);
+    public void add(final Session session);
+
+    public void bind(String unique, Session session);
+
+    public Session getSession(final String unique);
 
     public String getUnique(final Session session);
-
-    public void add(final String key, final Session session) throws Exception;
 
     public void remove(final Session session);
 

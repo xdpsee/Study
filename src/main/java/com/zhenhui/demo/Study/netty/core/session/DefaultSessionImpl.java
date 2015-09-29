@@ -10,16 +10,26 @@ import java.lang.ref.WeakReference;
 import java.net.SocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultSessionImpl implements Session {
 
     private ConcurrentHashMap<String, Object> attributes = new ConcurrentHashMap<String, Object>(2);
     private WeakReference<Channel> channelRef;
     private final SocketAddress socketAddress;
+    private final long id;
+
+    private static final AtomicLong ID = new AtomicLong(1);
 
     protected DefaultSessionImpl(Channel channel){
         channelRef = new WeakReference<Channel>(channel);
         socketAddress = channel.remoteAddress();
+        id = ID.incrementAndGet();
+    }
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
     @Override
@@ -44,6 +54,10 @@ public class DefaultSessionImpl implements Session {
                     }
                 }
             });
+        } else {
+            if (callback != null) {
+                callback.messageSended(false);
+            }
         }
     }
 
@@ -63,6 +77,8 @@ public class DefaultSessionImpl implements Session {
 
         DefaultSessionImpl that = (DefaultSessionImpl) o;
 
+        if (id != that.id) return false;
+
         if (!socketAddress.equals(that.socketAddress)) return false;
 
         return true;
@@ -70,8 +86,8 @@ public class DefaultSessionImpl implements Session {
 
     @Override
     public int hashCode() {
-
-        return socketAddress.hashCode();
-
+        int result = socketAddress.hashCode();
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        return result;
     }
 }

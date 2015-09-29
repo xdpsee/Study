@@ -1,5 +1,6 @@
 package com.zhenhui.demo.Study.netty.core.handler;
 
+import com.zhenhui.demo.Study.netty.core.session.DefaultSessionManager;
 import com.zhenhui.demo.Study.netty.core.session.Session;
 import com.zhenhui.demo.Study.netty.core.message.Message;
 import com.zhenhui.demo.Study.netty.core.session.SessionFactory;
@@ -26,6 +27,9 @@ public abstract class AbstractHandler extends ChannelHandlerAdapter implements C
     public final void channelActive(ChannelHandlerContext ctx) throws Exception {
         final Session session = SessionFactory.create(ctx.channel());
         ctx.attr(SESSION_KEY).set(session);
+
+        DefaultSessionManager.instance().add(session);
+
         sessionOpened(session);
     }
 
@@ -33,6 +37,7 @@ public abstract class AbstractHandler extends ChannelHandlerAdapter implements C
     public final void channelInactive(ChannelHandlerContext ctx) throws Exception {
         final Session session = ctx.attr(SESSION_KEY).get();
         if (session != null) {
+            DefaultSessionManager.instance().remove(session);
             sessionClosed(session);
         } else {
             ctx.fireChannelInactive();

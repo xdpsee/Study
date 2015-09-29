@@ -8,6 +8,8 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public interface Session {
 
+    public Long getId();
+
     public Map<String, Object> attributes();
 
     public SocketAddress getPeerAddress();

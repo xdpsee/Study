@@ -3,63 +3,85 @@ package com.zhenhui.demo.Study.netty.core.session;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import java.net.SocketAddress;
+import java.util.HashSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("unused")
-public class DefaultSessionManager implements SessionManager {
+public final class DefaultSessionManager implements SessionManager {
 
-    // unique, ip:port, session
-    private BiMap<String, Session> container = HashBiMap.create(256);
+    // unique, session
+    private BiMap<String, Session> sessionUniqueMap = HashBiMap.create(256);
+    private HashSet<Session> sessions = new HashSet<Session>(256);
+
     private final Lock lock = new ReentrantLock();
+
+    private final static DefaultSessionManager defaultSessionManager = new DefaultSessionManager();
+
+    public static DefaultSessionManager instance() {
+        return defaultSessionManager;
+    }
+
+    public void add(final Session session) {
+        if (!sessions.contains(session)) {
+            sessions.add(session);
+        }
+    }
+
+    @Override
+    public void bind(final String unique, final Session session) {
+        lock.lock();
+
+        try {
+            if (null == unique || "".equals(unique) || null == session) {
+                return;
+            }
+
+            if (!sessions.contains(session)) {
+                sessions.add(session);
+            }
+
+            sessionUniqueMap.put(unique, session);
+
+        } finally {
+            lock.unlock();
+        }
+    }
 
     @Override
     public Session getSession(String unique) {
         lock.lock();
 
         try {
-            return container.get(unique);
+            return sessionUniqueMap.get(unique);
         } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public String getUnique(Session session) {
+    public String getUnique(final Session session) {
         lock.lock();
 
         try {
-
-            return container.inverse().get(session);
+            return sessionUniqueMap.inverse().get(session);
         } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public void add(String unique, Session session) throws Exception {
+    public void remove(final Session session) {
         lock.lock();
 
         try {
-
-            container.put(unique, session);
+            sessions.remove(session);
+            sessionUniqueMap.inverse().remove(session);
 
         } finally {
             lock.unlock();
         }
     }
 
-    @Override
-    public void remove(Session session) {
-        lock.lock();
-
-        try {
-
-            container.inverse().remove(session);
-
-        } finally {
-            lock.unlock();
-        }
-    }
+    private DefaultSessionManager(){}
 }
