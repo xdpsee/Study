@@ -48,7 +48,12 @@ public abstract class AbstractHandler extends ChannelHandlerAdapter implements C
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
         if (msg instanceof Message) {
-            messageReceived((Message)msg);
+            final Session session = ctx.attr(SESSION_KEY).get();
+            if (session != null) {
+                messageReceived(session, (Message) msg);
+            } else {
+                throw new Exception("Session shouldn't be null!");
+            }
         } else {
             ctx.fireChannelRead(msg);
         }
@@ -72,16 +77,23 @@ public abstract class AbstractHandler extends ChannelHandlerAdapter implements C
     @Override
     public final void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
-        sessionException(cause);
+        final Session session = ctx.attr(SESSION_KEY).get();
+        if (session != null) {
+            sessionException(session, cause);
+        } else {
+            ctx.close();
+        }
     }
 
     public abstract void sessionOpened(final Session session);
 
+    public abstract void messageReceived(final Session session, final Message message);
+
     public abstract void sessionClosed(final Session session);
 
-    public abstract void sessionException(final Throwable cause);
+    public abstract void sessionException(final Session session, final Throwable cause);
 
-    public abstract void messageReceived(final Message message);
+
 }
 
 

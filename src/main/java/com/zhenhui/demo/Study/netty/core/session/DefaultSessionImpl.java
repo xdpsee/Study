@@ -90,4 +90,12 @@ public class DefaultSessionImpl implements Session {
         result = 31 * result + (int) (id ^ (id >>> 32));
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "DefaultSessionImpl{" +
+                "id = " + id +
+                ", peer = " + socketAddress +
+                '}';
+    }
 }

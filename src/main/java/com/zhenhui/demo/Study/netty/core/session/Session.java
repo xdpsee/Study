@@ -14,7 +14,7 @@ public interface Session {
 
     public SocketAddress getPeerAddress();
 
-    public void close() throws Exception;
+    public void close();
 
     public void write(Message message, final Message.Callback callback) throws Exception;
 }
