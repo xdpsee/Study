@@ -16,7 +16,7 @@ public interface Session {
 
     public void close();
 
-    public void write(Message message, final Message.Callback callback) throws Exception;
+    public void write(Message message, final Message.Callback callback);
 }
 
 

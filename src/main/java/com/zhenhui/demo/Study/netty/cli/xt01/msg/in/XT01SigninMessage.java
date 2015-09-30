@@ -1,5 +1,6 @@
-package com.zhenhui.demo.Study.netty.cli.xt01.msg;
+package com.zhenhui.demo.Study.netty.cli.xt01.msg.in;
 
+import com.zhenhui.demo.Study.netty.cli.xt01.msg.XT01Message;
 import lombok.Data;
 
 @Data

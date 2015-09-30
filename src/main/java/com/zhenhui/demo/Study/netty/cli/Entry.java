@@ -16,7 +16,6 @@ public class Entry {
             System.in.read();
 
             server.shutdown();
-
         } catch (Exception e) {
             e.printStackTrace();
         }

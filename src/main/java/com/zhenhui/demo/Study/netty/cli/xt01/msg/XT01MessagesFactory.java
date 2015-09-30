@@ -1,5 +1,7 @@
 package com.zhenhui.demo.Study.netty.cli.xt01.msg;
 
+import com.zhenhui.demo.Study.netty.cli.xt01.msg.in.XT01SigninMessage;
+
 public class XT01MessagesFactory {
 
 
