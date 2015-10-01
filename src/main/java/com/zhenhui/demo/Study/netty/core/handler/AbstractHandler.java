@@ -45,12 +45,28 @@ public abstract class AbstractHandler extends ChannelHandlerAdapter implements C
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
+    public void channelRead(ChannelHandlerContext ctx, final Object msg) throws Exception {
         if (msg instanceof Message) {
             final Session session = ctx.attr(SESSION_KEY).get();
             if (session != null) {
-                messageReceived(session, (Message) msg);
+                if (ctx.executor().inEventLoop()) {
+                    try {
+                        messageReceived(session, (Message) msg);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    ctx.executor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                messageReceived(session, (Message) msg);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
             } else {
                 throw new Exception("Session shouldn't be null!");
             }

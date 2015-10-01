@@ -21,7 +21,7 @@ public class XT01SigninFilter extends AbstractFilter<XT01SigninMessage> {
         session.write(new XT01SigninResponse(message.getImei()), new Message.Callback(){
             @Override
             public void messageSended(boolean success) {
-
+                System.out.println("response send okay.");
             }
         });
     }

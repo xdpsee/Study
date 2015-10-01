@@ -1,5 +1,6 @@
 package com.zhenhui.demo.Study.netty.cli.xt01.msg;
 
+import com.zhenhui.demo.Study.netty.cli.common.ByteUtils;
 import com.zhenhui.demo.Study.netty.core.codec.AbstractDecoder;
 import io.netty.buffer.ByteBuf;
 
@@ -12,7 +13,7 @@ public class XT01MessageDecoder extends AbstractDecoder<XT01Message> {
     private static final int SERIAL_NUMBER_BYTES = 2;
     private static final int PACKAGE_LENGTH_FILED_BYTES = 2;
 
-    private static final int HEADER_SIZE = MAGIC.length + PROTOCOL_WORD_BYTES + PACKAGE_LENGTH_FILED_BYTES;
+    private static final int HEADER_SIZE = MAGIC.length + PROTOCOL_WORD_BYTES + SERIAL_NUMBER_BYTES + PACKAGE_LENGTH_FILED_BYTES;
 
     @Override
     protected XT01Message decode(ByteBuf buf) {
@@ -36,8 +37,11 @@ public class XT01MessageDecoder extends AbstractDecoder<XT01Message> {
             return null;
         }
 
-        final short serial = buf.getShort(curr + MAGIC.length + PROTOCOL_WORD_BYTES);
-        final short length = buf.getShort(curr + MAGIC.length + PROTOCOL_WORD_BYTES + SERIAL_NUMBER_BYTES);
+        final byte[] _2bytes = new byte[2];
+        buf.getBytes(curr + MAGIC.length + PROTOCOL_WORD_BYTES, _2bytes);
+        final short serial = ByteUtils.bytesToShort(_2bytes);
+        buf.getBytes(curr + MAGIC.length + PROTOCOL_WORD_BYTES + SERIAL_NUMBER_BYTES, _2bytes);
+        final short length = ByteUtils.bytesToShort(_2bytes);
 
         final int need = length - HEADER_SIZE;
         final int remain = readableBytes - HEADER_SIZE;

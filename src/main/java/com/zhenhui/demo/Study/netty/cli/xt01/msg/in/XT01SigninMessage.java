@@ -20,7 +20,7 @@ public class XT01SigninMessage extends XT01Message {
         message.setImei(new String(content, 0, IMEI_LENGTH));
         message.setAppVersion(new String(content, IMEI_LENGTH, content.length - IMEI_LENGTH));
 
-        return null;
+        return message;
     }
 
     @Override

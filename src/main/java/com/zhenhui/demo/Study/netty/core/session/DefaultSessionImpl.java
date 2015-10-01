@@ -46,7 +46,7 @@ public class DefaultSessionImpl implements Session {
     public void write(Message message, final Message.Callback callback) {
         Channel channel = channelRef.get();
         if (channel != null) {
-            channel.writeAndFlush(message).addListener(new ChannelFutureListener(){
+            channel.writeAndFlush(message.getBytes()).addListener(new ChannelFutureListener(){
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (callback != null) {

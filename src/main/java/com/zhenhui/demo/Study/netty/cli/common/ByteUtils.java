@@ -13,4 +13,11 @@ public class ByteUtils {
         return bytes;
     }
 
+    public static short bytesToShort(byte[] arr) {
+        if (arr != null && arr.length != 2) {
+            throw new IllegalArgumentException("byte数组必须不为空,并且是2位!");
+        }
+        return (short) (((short) arr[0] << 8) | ((short) arr[1] & 0xff));
+    }
+
 }
